@@ -1,65 +1,58 @@
-import { Component } from 'react';
+import { useState } from 'react';
 import css from './ContactForm.module.css';
 
-class ContactForm extends Component {
-  state = {
+const ContactForm = ({ onSubmit }) => {
+  const [formValues, setFormValues] = useState({
     name: '',
     number: '',
+  });
+
+  const reset = () => {
+    setFormValues({ name: '', number: '' });
   };
 
-  handleSubmit = e => {
-    e.preventDefault();
-    this.props.onSubmit({ name: this.state.name, number: this.state.number });
-    this.reset();
-  };
-
-  handleChange = e => {
+  const handleChange = e => {
     const { name, value } = e.target;
-    this.setState({ [name]: value });
+    setFormValues(prev => ({ ...prev, [name]: value }));
   };
 
-  reset = () => {
-    this.setState({
-      name: '',
-      number: '',
-    });
+  const handleSubmit = e => {
+    e.preventDefault();
+    onSubmit(formValues);
+    reset();
   };
 
-  render() {
-    const { name, number } = this.state;
+  return (
+    <form className={css.form} onSubmit={handleSubmit}>
+      <label className={css.label}>
+        Name
+        <input
+          className={css.input}
+          type="text"
+          name="name"
+          onChange={handleChange}
+          value={formValues.name}
+          required
+        />
+      </label>
 
-    return (
-      <form className={css.form} onSubmit={this.handleSubmit}>
-        <label className={css.label}>
-          Name
-          <input
-            className={css.input}
-            type="text"
-            name="name"
-            onChange={this.handleChange}
-            value={name}
-            required
-          />
-        </label>
-
-        <label className={css.label}>
-          Number
-          <input
-            className={css.input}
-            type="tel"
-            name="number"
-            onChange={this.handleChange}
-            value={number}
-            pattern="[0-9]{3}-[0-9]{2}-[0-9]{2}"
-            required
-          />
-        </label>
-        <button className={css.button} type="submit">
-          Add contact
-        </button>
-      </form>
-    );
-  }
-}
+      <label className={css.label}>
+        Number
+        <input
+          className={css.input}
+          type="tel"
+          name="number"
+          onChange={handleChange}
+          value={formValues.number}
+          pattern="[0-9]{3}-[0-9]{2}-[0-9]{2}"
+          required
+        />
+      </label>
+      <button className={css.button} type="submit">
+        Add contact
+      </button>
+    </form>
+  );
+};
 
 export default ContactForm;
